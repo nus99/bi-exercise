@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -32,13 +31,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -46,10 +38,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -57,23 +45,25 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "show": false
+          "fields": "",
+          "values": false
         },
-        "showHeader": true
+        "textMode": "auto"
       },
       "pluginVersion": "9.5.2",
       "targets": [
@@ -85,7 +75,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT * FROM kpi_1d WHERE time = (select max(time) from kpi_1d) AND device_identifier = (SELECT max(device_identifier) FROM kpi_1d) ORDER BY kpi_type_code ",
+          "rawSql": "SELECT COUNT(DISTINCT device_identifier)\r\nFROM kpi_1d inner join kpi_type on kpi_type.code = kpi_1d.kpi_type_code\r\nWHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth) \r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -107,8 +97,447 @@
           "table": "kpi_1d"
         }
       ],
-      "title": "kpi_1d",
-      "type": "table"
+      "title": "Total Devices",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P052245A3190431CB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P052245A3190431CB"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(DISTINCT org_identifier)\r\nFROM kpi_1d inner join kpi_type on kpi_type.code = kpi_1d.kpi_type_code\r\nWHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth) \r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "kpi_1d"
+        }
+      ],
+      "title": "Total Organizations",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P052245A3190431CB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P052245A3190431CB"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\nCOUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END)\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Monthly Ideal Performance Devices",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P052245A3190431CB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P052245A3190431CB"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\nCOUNT(CASE WHEN mean_devices != 0 THEN 1 ELSE NULL END)\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Monthly Devices with Alerts",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P052245A3190431CB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 100
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^percentage$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P052245A3190431CB"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n    CASE\r\n        WHEN COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) = 0 THEN 0\r\n        ELSE (COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) * 100.0) / COUNT(*)\r\n        END as percentage\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "% Monthly Ideal Performance Devices",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P052245A3190431CB"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
+            "pointSize": 10,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 16,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P052245A3190431CB"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n    CASE\r\n        WHEN COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) = 0 THEN 0\r\n        ELSE (COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) * 100.0) / COUNT(*) \r\n    END as \"% Monthly Idea Performance Devices\", \r\n    COUNT(CASE WHEN mean_devices != 0 THEN 1 ELSE NULL END) as \"Devices with Alerts\",\r\n    COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) as \"Ideal Performance Devices\", \r\n    ym \r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        DATE_TRUNC('month', time) as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList)\r\n    GROUP BY device_identifier, DATE_TRUNC('month', time)\r\n) sub\r\nGROUP BY ym;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Monthly Ideal Performance Devices",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -121,7 +550,7 @@
             "mode": "thresholds"
           },
           "custom": {
-            "align": "auto",
+            "align": "left",
             "cellOptions": {
               "type": "auto"
             },
@@ -136,8 +565,12 @@
                 "value": null
               },
               {
+                "color": "green",
+                "value": 0
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           }
@@ -145,12 +578,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "h": 11,
+        "w": 8,
+        "x": 16,
+        "y": 16
       },
-      "id": 2,
+      "id": 8,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -173,7 +606,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT * FROM kpi_type ORDER BY code",
+          "rawSql": "SELECT\r\n    device_identifier AS Device,\r\n    org_identifier as Organization,\r\n    COUNT(distinct CASE WHEN kpi_alert_count <> 0 THEN kpi_type_code END) as \"total alerts\"\r\nFROM kpi_1d\r\nWHERE  device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)\r\nGROUP BY\r\n    device_identifier,\r\n    TO_CHAR(time, 'YYYY-MM'),\r\n    Organization\r\norder by \"total alerts\" asc",
           "refId": "A",
           "sql": {
             "columns": [
@@ -191,11 +624,10 @@
               }
             ],
             "limit": 50
-          },
-          "table": "kpi_1d"
+          }
         }
       ],
-      "title": "kpi_type",
+      "title": "Ideal Performance Devices List",
       "type": "table"
     },
     {
@@ -207,12 +639,13 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 27
       },
       "id": 3,
       "options": {
         "folderId": 0,
         "maxItems": 10,
+        "query": "",
         "showHeadings": false,
         "showRecentlyViewed": false,
         "showSearch": true,
@@ -224,16 +657,124 @@
       "type": "dashlist"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P052245A3190431CB"
+        },
+        "definition": "select distinct device_identifier from kpi_1d;",
+        "description": "Returns the list of devices.",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Device",
+        "multi": true,
+        "name": "DeviceList",
+        "options": [],
+        "query": "select distinct device_identifier from kpi_1d;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P052245A3190431CB"
+        },
+        "definition": "select distinct org_identifier  from kpi_1d;",
+        "description": "Returns the list of organisations.",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Organisation",
+        "multi": true,
+        "name": "OrganisationList",
+        "options": [],
+        "query": "select distinct org_identifier  from kpi_1d;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "2022-11"
+          ],
+          "value": [
+            "2022-11"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P052245A3190431CB"
+        },
+        "definition": "SELECT distinct TO_CHAR (time, 'YYYY-MM') FROM kpi_1d;",
+        "description": "Returns the period of alerts.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Period",
+        "multi": true,
+        "name": "YearMonth",
+        "options": [],
+        "query": "SELECT distinct TO_CHAR (time, 'YYYY-MM') FROM kpi_1d;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Select only one Month!",
+          "value": "Select only one Month!"
+        },
+        "hide": 1,
+        "label": "Select only one Month!",
+        "name": "Advisor",
+        "options": [
+          {
+            "selected": true,
+            "text": "Select only one Month!",
+            "value": "Select only one Month!"
+          }
+        ],
+        "query": "Select only one Month!",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
   },
   "time": {
-    "from": "now-5m",
-    "to": "now"
+    "from": "2022-11-01T00:00:00.000Z",
+    "to": "2023-05-01T00:00:00.000Z"
   },
   "timepicker": {
     "hidden": true
@@ -241,6 +782,6 @@
   "timezone": "",
   "title": "Home",
   "uid": "d0e693b4-839d-4d5d-aff8-2a61d6fa8452",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }
