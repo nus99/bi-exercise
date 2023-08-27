@@ -75,7 +75,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(DISTINCT device_identifier)\r\nFROM kpi_1d inner join kpi_type on kpi_type.code = kpi_1d.kpi_type_code\r\nWHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth) \r\n",
+          "rawSql": "SELECT COUNT(DISTINCT device_identifier)\r\nFROM kpi_1d inner join kpi_type on kpi_type.code = kpi_1d.kpi_type_code\r\nWHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth) \r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -154,7 +154,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(DISTINCT org_identifier)\r\nFROM kpi_1d inner join kpi_type on kpi_type.code = kpi_1d.kpi_type_code\r\nWHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth) \r\n",
+          "rawSql": "SELECT COUNT(DISTINCT org_identifier)\r\nFROM kpi_1d inner join kpi_type on kpi_type.code = kpi_1d.kpi_type_code\r\nWHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth) \r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -233,7 +233,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\nCOUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END)\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
+          "rawSql": "SELECT \r\nCOUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END)\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
           "refId": "A",
           "sql": {
             "columns": [
@@ -311,7 +311,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\nCOUNT(CASE WHEN mean_devices != 0 THEN 1 ELSE NULL END)\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
+          "rawSql": "SELECT \r\nCOUNT(CASE WHEN mean_devices != 0 THEN 1 ELSE NULL END)\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
           "refId": "A",
           "sql": {
             "columns": [
@@ -398,7 +398,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n    CASE\r\n        WHEN COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) = 0 THEN 0\r\n        ELSE (COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) * 100.0) / COUNT(*)\r\n        END as percentage\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
+          "rawSql": "SELECT \r\n    CASE\r\n        WHEN COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) = 0 THEN 0\r\n        ELSE (COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) * 100.0) / COUNT(*)\r\n        END as percentage\r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        TO_CHAR(time, 'YYYY-MM') as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)  \r\n    GROUP BY device_identifier, TO_CHAR(time, 'YYYY-MM')\r\n) sub",
           "refId": "A",
           "sql": {
             "columns": [
@@ -447,7 +447,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "smooth",
+            "lineInterpolation": "linear",
             "lineStyle": {
               "dash": [
                 10,
@@ -477,10 +477,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -498,7 +494,7 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "right",
+          "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
@@ -515,7 +511,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n    CASE\r\n        WHEN COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) = 0 THEN 0\r\n        ELSE (COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) * 100.0) / COUNT(*) \r\n    END as \"% Monthly Idea Performance Devices\", \r\n    COUNT(CASE WHEN mean_devices != 0 THEN 1 ELSE NULL END) as \"Devices with Alerts\",\r\n    COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) as \"Ideal Performance Devices\", \r\n    ym \r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        DATE_TRUNC('month', time) as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList)\r\n    GROUP BY device_identifier, DATE_TRUNC('month', time)\r\n) sub\r\nGROUP BY ym;",
+          "rawSql": "SELECT \r\n    CASE\r\n        WHEN COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) = 0 THEN 0\r\n        ELSE (COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) * 100.0) / COUNT(*) \r\n    END as \"% Monthly Idea Performance Devices\", \r\n    COUNT(CASE WHEN mean_devices != 0 THEN 1 ELSE NULL END) as \"Devices with Alerts\",\r\n    COUNT(CASE WHEN mean_devices = 0 THEN 1 ELSE NULL END) as \"Ideal Performance Devices\", \r\n    ym \r\nFROM (\r\n    SELECT  \r\n        AVG(kpi_alert_count) as mean_devices, \r\n        device_identifier, \r\n        DATE_TRUNC('month', time) as ym\r\n    FROM kpi_1d\r\n    WHERE device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList)\r\n    GROUP BY device_identifier, DATE_TRUNC('month', time)\r\n) sub\r\nGROUP BY ym;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -575,7 +571,20 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "organization"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 138
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 11,
@@ -594,7 +603,13 @@
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "total alerts"
+          }
+        ]
       },
       "pluginVersion": "9.5.2",
       "targets": [
@@ -606,7 +621,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n    device_identifier AS Device,\r\n    org_identifier as Organization,\r\n    COUNT(distinct CASE WHEN kpi_alert_count <> 0 THEN kpi_type_code END) as \"total alerts\"\r\nFROM kpi_1d\r\nWHERE  device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganisationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)\r\nGROUP BY\r\n    device_identifier,\r\n    TO_CHAR(time, 'YYYY-MM'),\r\n    Organization\r\norder by \"total alerts\" asc",
+          "rawSql": "SELECT\r\n    device_identifier AS Device,\r\n    org_identifier as Organization,\r\n    COUNT(distinct CASE WHEN kpi_alert_count <> 0 THEN kpi_type_code END) as \"total alerts\"\r\nFROM kpi_1d\r\nWHERE  device_identifier IN ($DeviceList) \r\nAND org_identifier IN ($OrganizationList) \r\nAND TO_CHAR(time, 'YYYY-MM') IN ($YearMonth)\r\nGROUP BY\r\n    device_identifier,\r\n    TO_CHAR(time, 'YYYY-MM'),\r\n    Organization\r\norder by \"total alerts\" asc",
           "refId": "A",
           "sql": {
             "columns": [
@@ -657,7 +672,7 @@
       "type": "dashlist"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -710,9 +725,9 @@
         "description": "Returns the list of organisations.",
         "hide": 0,
         "includeAll": true,
-        "label": "Organisation",
+        "label": "Organization",
         "multi": true,
-        "name": "OrganisationList",
+        "name": "OrganizationList",
         "options": [],
         "query": "select distinct org_identifier  from kpi_1d;",
         "refresh": 1,
@@ -782,6 +797,6 @@
   "timezone": "",
   "title": "Home",
   "uid": "d0e693b4-839d-4d5d-aff8-2a61d6fa8452",
-  "version": 5,
+  "version": 3,
   "weekStart": ""
 }

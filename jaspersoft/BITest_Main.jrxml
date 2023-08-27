@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BITest" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9c0c0141-99db-4691-86db-76924c806c0b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="BITestAdapter"/>
+	<parameter name="paramDevice" class="java.lang.String"/>
+	<parameter name="paramOrganization" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+    CAST(device_identifier AS VARCHAR) as device,
+    CAST(org_identifier AS VARCHAR) as organization,
+    ym as period,
+    SUM(CASE WHEN perfectmonth != 0 THEN 1 ELSE 0 END) AS "monthly active alerts",
+    CASE WHEN SUM(CASE WHEN perfectmonth != 0 THEN 1 ELSE 0 END) > 0 THEN 'Some active alerts' ELSE 'Perfect Performance' END  as performance
+FROM (
+    SELECT
+        AVG(kpi_alert_count) AS perfectMonth,
+        TO_CHAR(time, 'YYYY-MM') AS ym,
+        device_identifier,
+        org_identifier
+    FROM kpi_1d
+    INNER JOIN kpi_type ON kpi_type.code = kpi_1d.kpi_type_code
+        WHERE ( $P{paramDevice} is Null  or CAST(device_identifier AS VARCHAR) = $P{paramDevice})
+ and ($P{paramOrganization} is Null or CAST(org_identifier AS VARCHAR) =  $P{paramOrganization}) 
+    GROUP BY TO_CHAR(time, 'YYYY-MM'), device_identifier, org_identifier, kpi_type_code
+) sub
+GROUP BY device_identifier, org_identifier, ym
+order by device_identifier, period;]]>
+	</queryString>
+	<field name="device" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="device"/>
+		<property name="com.jaspersoft.studio.field.label" value="device"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kpi_1d"/>
+	</field>
+	<field name="organization" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="organization"/>
+		<property name="com.jaspersoft.studio.field.label" value="organization"/>
+	</field>
+	<field name="period" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="period"/>
+		<property name="com.jaspersoft.studio.field.label" value="period"/>
+	</field>
+	<field name="monthly active alerts" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="monthly active alerts"/>
+		<property name="com.jaspersoft.studio.field.label" value="monthly active alerts"/>
+	</field>
+	<field name="performance" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="performance"/>
+		<property name="com.jaspersoft.studio.field.label" value="performance"/>
+	</field>
+	<group name="Group1" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{device}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement x="0" y="10" width="100" height="20" uuid="d4961575-363e-46dd-87b5-63960bcb8dc3"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Device: " + $F{device}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="72" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-19" width="595" height="80" forecolor="#42C2AC" backcolor="#42C2AC" uuid="559ac24e-0930-4379-8503-c93ffc99e0cd"/>
+				<staticText>
+					<reportElement x="6" y="19" width="344" height="36" forecolor="#FFFFFF" uuid="0cb9a56c-d01c-454a-af4c-d0076e823c3d"/>
+					<textElement verticalAlignment="Middle">
+						<font size="24" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Key Performance Indicators]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="400" y="30" width="190" height="50" forecolor="#FFFFFF" uuid="f8bccd30-8c99-48ef-8cee-92ca9538282b"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[The following report shows the alerts activated by each of the devices.]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="30" forecolor="#42C2AC" uuid="f11f26dc-e8ed-4042-8677-a67ffae14429">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="41472dd4-c264-4a5b-bd53-6d6224fd95a9"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Device]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="110" height="30" forecolor="#42C2AC" uuid="ad2087b9-b6c3-4bc8-974a-c65ad3efbeec">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c8dfb519-78dd-4906-b666-8ca8fb3e5aaf"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Organization]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="0" width="149" height="30" forecolor="#42C2AC" uuid="71ab4ead-979b-44cb-a0ea-dd6601e841b6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f4c576c2-f6f1-4356-8ebd-72fec680f797"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monthly Active Alerts]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="0" width="100" height="30" forecolor="#42C2AC" uuid="a3ca0f9e-16b4-41b6-852a-b9c6433f4b24">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6606d2c0-e545-4d12-b030-54622f484273"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="113" height="30" forecolor="#42C2AC" uuid="5c48c688-d3c2-4425-8904-cd0cc78fb872">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b06117d4-c02a-46cc-afef-68ffce0573ab"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Performance]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="80" height="30" uuid="2b08db48-df08-4011-bb30-1103b042e0c9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="41472dd4-c264-4a5b-bd53-6d6224fd95a9"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{device}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="110" height="30" uuid="e024136b-ce7f-4721-baeb-14c5f9deca34">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c8dfb519-78dd-4906-b666-8ca8fb3e5aaf"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{organization}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="0" width="149" height="30" uuid="5bf0b7db-db00-4f44-85e7-f2ab746d8430">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f4c576c2-f6f1-4356-8ebd-72fec680f797"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{monthly active alerts} ]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="0" width="100" height="30" uuid="349e0b35-333a-4891-886c-3e163954d1d2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6606d2c0-e545-4d12-b030-54622f484273"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{period}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="0" width="113" height="30" uuid="064e5f35-ee62-4b50-b24c-c6aa1d1032ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b06117d4-c02a-46cc-afef-68ffce0573ab"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{performance} ]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="36" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="146c29cc-185b-422c-acf5-e0dc31c87563"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="e521250e-b63f-4803-875a-6c8199151b3d"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="704dc2f3-4ac3-4322-8b06-caf8fd24208b"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
