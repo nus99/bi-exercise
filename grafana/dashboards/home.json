@@ -475,8 +475,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -557,8 +556,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "green",
@@ -773,7 +771,7 @@
         },
         "hide": 1,
         "label": "Select only one Month!",
-        "name": "Advisor",
+        "name": "Warning",
         "options": [
           {
             "selected": true,
@@ -797,6 +795,6 @@
   "timezone": "",
   "title": "Home",
   "uid": "d0e693b4-839d-4d5d-aff8-2a61d6fa8452",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }
